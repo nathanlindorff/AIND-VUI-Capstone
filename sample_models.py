@@ -1,7 +1,7 @@
 from keras import backend as K
 from keras.models import Model
 from keras.layers import (BatchNormalization, Conv1D, Dense, Input, 
-    TimeDistributed, Activation, Bidirectional, SimpleRNN, GRU, LSTM)
+    TimeDistributed, Activation, Bidirectional, SimpleRNN, GRU, LSTM, Dropout)
 
 def simple_rnn_model(input_dim, output_dim=29):
     """ Build a recurrent network for speech 
@@ -137,15 +137,46 @@ def bidirectional_rnn_model(input_dim, units, output_dim=29):
 def final_model():
     """ Build a deep network for speech 
     """
+    input_dim = 161
+    units = 200
+    output_dim=29
+    
+    filters=200
+    kernel_size=11
+    conv_stride=2
+    conv_border_mode='valid'
+    
     # Main acoustic input
     input_data = Input(name='the_input', shape=(None, input_dim))
     # TODO: Specify the layers in your network
-    ...
+    
+#    conv_1d = Conv1D(filters, kernel_size, 
+#                     strides=conv_stride, 
+#                     padding=conv_border_mode,
+#                     activation='relu',
+#                     name='conv1d')(input_data)
+#    bn_cnn = BatchNormalization(name='bn_conv_1d')(conv_1d)
+    
+    # Originally had 5, took 8-9 hours and then crashed. Given i'm paying for an AWS instance I really didn't want to run that risk again.
+    rnn_layers = 3
+    
+    gru_input = input_data
+    for index in range(rnn_layers):
+        bidir_rnn = Bidirectional(GRU(units, activation='relu',
+            return_sequences=True, implementation=2, name='rnn_{}'.format(index)))(gru_input)
+#        bn_rnn = BatchNormalization(name='bn_rnn_{}'.format(index))(bd_rnn)
+        gru_input = bidir_rnn
+    
+    
+    time_dense = TimeDistributed(Dense(output_dim))(bidir_rnn)
+    
     # TODO: Add softmax activation layer
-    y_pred = ...
+    y_pred = Activation('softmax', name='softmax')(time_dense)
     # Specify the model
     model = Model(inputs=input_data, outputs=y_pred)
     # TODO: Specify model.output_length
-    model.output_length = ...
+    model.output_length = lambda x: x
+#    model.output_length = lambda x: cnn_output_length(
+#        x, kernel_size, conv_border_mode, conv_stride)
     print(model.summary())
     return model

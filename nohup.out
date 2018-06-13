@@ -1061,3 +1061,6 @@ Free memory: 11.11GiB
 2018-06-12 05:47:40.278122: I tensorflow/core/common_runtime/gpu/gpu_device.cc:977] Creating TensorFlow device (/gpu:0) -> (device: 0, name: Tesla K80, pci bus id: 0000:00:1e.0)
 [I 05:49:45.244 NotebookApp] Saving file at /vui_notebook.ipynb
 [I 05:49:46.746 NotebookApp] Saving file at /vui_notebook.ipynb
+[C 05:50:56.249 NotebookApp] received signal 15, stopping
+[I 05:50:56.263 NotebookApp] Shutting down 1 kernel
+[I 05:50:56.465 NotebookApp] Kernel shutdown: 2af2826c-a29a-48cc-97fd-e733306057a7

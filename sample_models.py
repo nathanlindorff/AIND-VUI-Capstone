@@ -150,13 +150,6 @@ def final_model():
     input_data = Input(name='the_input', shape=(None, input_dim))
     # TODO: Specify the layers in your network
     
-#    conv_1d = Conv1D(filters, kernel_size, 
-#                     strides=conv_stride, 
-#                     padding=conv_border_mode,
-#                     activation='relu',
-#                     name='conv1d')(input_data)
-#    bn_cnn = BatchNormalization(name='bn_conv_1d')(conv_1d)
-    
     # Originally had 5, took 8-9 hours and then crashed. Given i'm paying for an AWS instance I really didn't want to run that risk again.
     rnn_layers = 3
     
@@ -164,7 +157,6 @@ def final_model():
     for index in range(rnn_layers):
         bidir_rnn = Bidirectional(GRU(units, activation='relu',
             return_sequences=True, implementation=2, name='rnn_{}'.format(index)))(gru_input)
-#        bn_rnn = BatchNormalization(name='bn_rnn_{}'.format(index))(bd_rnn)
         gru_input = bidir_rnn
     
     
@@ -176,7 +168,6 @@ def final_model():
     model = Model(inputs=input_data, outputs=y_pred)
     # TODO: Specify model.output_length
     model.output_length = lambda x: x
-#    model.output_length = lambda x: cnn_output_length(
-#        x, kernel_size, conv_border_mode, conv_stride)
+
     print(model.summary())
     return model
